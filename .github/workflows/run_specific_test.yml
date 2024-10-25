@@ -31,5 +31,6 @@ jobs:
           API_KEY: ${{ secrets.GENAI_API_KEY }}
         run: |
           # Example command to run a specific test file
+          echo $PWD
           cd /home/runner/work/blog_fastapi/blog_fastapi
           pytest tests/test_feature.py --verbose
