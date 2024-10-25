@@ -12,6 +12,10 @@ jobs:
   run-specific-test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: /home/runner/work/blog_fastapi/blog_fastapi  # Set the working directory here
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
