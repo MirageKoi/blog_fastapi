@@ -27,10 +27,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run specific test
+        working_directory: ./blog_fastapi
         env:
           API_KEY: ${{ secrets.GENAI_API_KEY }}
         run: |
           # Example command to run a specific test file
           echo $PWD
-          PYTHONPATH: ${{ github.workspace }}/src
+          
           pytest tests/test_feature.py --verbose
