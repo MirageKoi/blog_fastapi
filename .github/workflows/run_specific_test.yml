@@ -11,9 +11,7 @@ on:
 jobs:
   run-specific-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./app
+    
 
     steps:
       - name: Checkout code
