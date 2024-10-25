@@ -38,4 +38,4 @@ jobs:
           
           cd /home/runner/work/blog_fastapi/blog_fastapi
           
-          python3 -m pytest tests/test_feature.py --verbose
+          python3 -m pytest tests/test_feature.py --verbose -s
