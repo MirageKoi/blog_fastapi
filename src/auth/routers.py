@@ -1,17 +1,23 @@
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
+
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from starlette import status
-from .repository import UserRepository
-from .service import UserService
+
+from src.adapters.database import get_db
 from src.auth.models import User
 from src.auth.schemas import CreateUserRequest, DecodedToken, Token
-from src.adapters.database import get_db
-from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from jose import jwt, JWTError
+
+from .repository import UserRepository
+from .service import UserService
+from .config import get_auth_settings
+
+settings = get_auth_settings()
+print(settings.model_dump())
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -45,14 +51,14 @@ def create_access_token(
     encode = {"sub": username, "id": user_id, "email": email}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
-    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(encode, settings.secret_key, algorithm=settings.algorithm)
 
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_bearer)]
 ) -> DecodedToken:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub", None)
         user_id: int = payload.get("id", None)
         user_email: str = payload.get("email", None)
@@ -70,16 +76,11 @@ async def get_current_user(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(repo: repository, create_user_request: CreateUserRequest):
-    create_user_model = User(
-        username=create_user_request.username,
-        email=create_user_request.email,
-        password=bcrypt_context.hash(create_user_request.password),
-    )
     new_user = create_user_request.model_copy()
     new_user.password = bcrypt_context.hash(new_user.password)
     await repo.create_user(new_user.model_dump())
-    # db.add(create_user_model)
-    # db.commit()
+
+    return {"Status": "Success"}
 
 
 @router.post("/token", response_model=Token)

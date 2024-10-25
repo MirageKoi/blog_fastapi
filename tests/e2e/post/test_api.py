@@ -9,31 +9,31 @@ from src.auth.schemas import DecodedToken
 from src.main import app
 
 
-def override_get_current_user():
-    return DecodedToken(id=1, username="testuser", email="testemail")
+# def override_get_current_user():
+#     return DecodedToken(id=1, username="testuser", email="testemail")
 
 
-@pytest.fixture(name="sessionv2")
-def session_fixture():
-    engine = create_engine(
-        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
-    )
-    Base.metadata.create_all(engine)
-    with sessionmaker(engine, autocommit=False, autoflush=False)() as session:
-        yield session
+# @pytest.fixture
+# def api_session():
+#     engine = create_engine(
+#         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
+#     )
+#     Base.metadata.create_all(engine)
+#     with sessionmaker(engine, autocommit=False, autoflush=False)() as session:
+#         yield session
 
 
-@pytest.fixture(name="client")
-def client_fixture(sessionv2: Session):
-    def get_session_override():
-        return sessionv2
+# @pytest.fixture(name="client")
+# def client_fixture(api_session: Session):
+#     def get_session_override():
+#         return api_session
 
-    app.dependency_overrides[get_db] = get_session_override
-    app.dependency_overrides[get_current_user] = override_get_current_user
+#     app.dependency_overrides[get_db] = get_session_override
+#     app.dependency_overrides[get_current_user] = override_get_current_user
 
-    client = TestClient(app)
-    yield client
-    app.dependency_overrides.clear()
+#     client = TestClient(app)
+#     yield client
+#     app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
