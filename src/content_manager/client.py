@@ -4,7 +4,9 @@ import os
 
 
 def experiment_feature():
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+    API_KEY = os.environ["GOOGLE_API_KEY"]
+    
+    genai.configure(api_key=API_KEY)
 
 
 
