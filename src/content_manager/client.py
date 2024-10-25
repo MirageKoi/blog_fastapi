@@ -3,13 +3,9 @@ import os
 
 
 
-def experiment_feature():
-    API_KEY = os.environ["GOOGLE_API_KEY"]
-
-    if API_KEY:
-        print("WE GOT THIS KEY CMON!!!!!!!")
+def experiment_feature(key: str):
     
-    genai.configure(api_key=API_KEY)
+    genai.configure(api_key=key)
 
 
 
