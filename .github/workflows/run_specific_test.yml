@@ -7,8 +7,7 @@ on:
   pull_request:
     branches:
       - main
-env:
-  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+
 jobs:
   run-specific-test:
     runs-on: ubuntu-latest
@@ -29,6 +28,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run specific test
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
        
         run: |
           # Example command to run a specific test file
