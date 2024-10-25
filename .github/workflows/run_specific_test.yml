@@ -12,10 +12,6 @@ jobs:
   run-specific-test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: /home/runner/work/blog_fastapi/blog_fastapi  # Set the working directory here
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,4 +31,5 @@ jobs:
           API_KEY: ${{ secrets.GENAI_API_KEY }}
         run: |
           # Example command to run a specific test file
+          cd /home/runner/work/blog_fastapi/blog_fastapi
           pytest tests/test_feature.py --verbose
