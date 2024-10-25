@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      FAKE_SEC: ${{ env.FAKE_SEC }}
+      FAKE_SEC: ${{ vars.FAKE_SEC }}
     
 
     steps:
