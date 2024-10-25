@@ -11,6 +11,9 @@ on:
 jobs:
   run-specific-test:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      FAKE_SEC: ${{ env.FAKE_SEC }}
     
 
     steps:
@@ -28,8 +31,6 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run specific test
-        env:
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
        
         run: |
           # Example command to run a specific test file
