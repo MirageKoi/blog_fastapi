@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.adapters.database import get_db
-from src.auth.models import User
 from src.auth.schemas import CreateUserRequest, DecodedToken, Token
 
 from .repository import UserRepository
@@ -17,12 +16,9 @@ from .service import UserService
 from .config import get_auth_settings
 
 settings = get_auth_settings()
-print(settings.model_dump())
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-SECRET_KEY = "197b2c37c391bed93fe80344fe73b806947a65e36206e05a1a23c2fa12702fe3"
-ALGORITHM = "HS256"
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
@@ -58,7 +54,9 @@ async def get_current_user(
     token: Annotated[str, Depends(oauth2_bearer)]
 ) -> DecodedToken:
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        )
         username: str = payload.get("sub", None)
         user_id: int = payload.get("id", None)
         user_email: str = payload.get("email", None)
