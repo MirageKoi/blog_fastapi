@@ -29,7 +29,7 @@ class CustomQuery(BaseModel):
 
 
 filter_query = Annotated[CustomQuery, Query()]
-
+# TODO: Separate bussiness logic from controller level
 # Right now implementation is tightly coupled to specific storage (SQLAlchemy)
 # In future we could separate this 
 @router.get("/api/comments-daily-breakdown", response_model=list[TotalCommentsOverTime])
