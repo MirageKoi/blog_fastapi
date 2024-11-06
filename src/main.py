@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 
 from src.adapters.database import Base, engine
@@ -12,3 +13,7 @@ app.include_router(post_router)
 app.include_router(analytics_router)
 
 Base.metadata.create_all(bind=engine)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
