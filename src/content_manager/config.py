@@ -1,13 +1,12 @@
+from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class AIClientSettings(BaseSettings):
+    api_key: str | None = None
 
-class OpenAIAPIKey(BaseSettings):
-    api_key: str
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    model_config = SettingsConfigDict(env_file=".env")
-
-
-
-def get_openai_settings():
-    return OpenAIAPIKey()  # type: ignore
+@lru_cache
+def get_ai_settings():
+    return AIClientSettings()  # type: ignore

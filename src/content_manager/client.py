@@ -1,4 +1,19 @@
+from typing import Protocol
+
 from google.cloud import language_v1
+
+
+class ILanguageClient(Protocol):
+    def analyze_text(self, text: str) -> bool: ...
+
+
+class MockLanguageClient:
+    """Mock AI Client is case api_key has not been provided.
+    Application will validate any text as safe.
+    """
+
+    def analyze_text(self, text: str) -> bool:
+        return True
 
 
 class LanguageClient:
