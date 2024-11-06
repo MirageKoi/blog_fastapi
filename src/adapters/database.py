@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 # from .config import settings
@@ -20,7 +21,7 @@ def get_db():
     with SessionLocal() as session:
         try:
             yield session
-        except Exception as exc:
+        except IntegrityError as exc:
             session.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
