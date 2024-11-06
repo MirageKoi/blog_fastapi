@@ -30,7 +30,8 @@ async def test_retrive_all_posts(session):
 
     assert result
     assert len(result) == 2
-    assert True
+    assert result[0].id == 1
+    assert result[1].id == 2
 
 
 async def test_retrive_post_by_id(populated_session):
@@ -50,14 +51,14 @@ async def test_create_post(session):
     record = session.scalar(select(Post))
 
     assert result
-    assert result == record
+    assert record.title == "Test 1"
+    assert record.id == 1
 
 
 async def test_update_post(populated_session):
     repo = PostRepository(populated_session)
-    db_post = await repo.get_post_by_id(2)
     values_to_update = {"title": "Updated Title"}
-    await repo.update_post(db_post, values_to_update)
+    await repo.update_post(id=2, values=values_to_update)
 
     result = populated_session.get(Post, 2)
 
@@ -66,8 +67,7 @@ async def test_update_post(populated_session):
 
 async def test_delete_post(populated_session):
     repo = PostRepository(populated_session)
-    db_post = await repo.get_post_by_id(2)
-    await repo.delete_post(db_post)
+    await repo.delete_post(2)
 
     result = populated_session.scalar(select(Post).filter(Post.id == 2))
 

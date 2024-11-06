@@ -1,14 +1,12 @@
 import pytest
 
 
-@pytest.mark.asyncio
 async def test_get_post_list(client):
     response = client.get("/post/")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_get_post_by_id(client):
     post_data = {"title": "Test Post", "content": "This is a test post."}
     create_response = client.post("/post", json=post_data)
@@ -19,7 +17,6 @@ async def test_get_post_by_id(client):
     assert response.json()["id"] == created_post["id"]
 
 
-@pytest.mark.asyncio
 async def test_create_post(client):
     post_data = {"title": "Test Post", "content": "This is a test post."}
     response = client.post("/post", json=post_data)
@@ -29,7 +26,6 @@ async def test_create_post(client):
     assert created_post["content"] == "This is a test post."
 
 
-@pytest.mark.asyncio
 async def test_update_post(client):
     post_data = {"title": "Test Post", "content": "This is a test post."}
     create_response = client.post("/post/", json=post_data)
@@ -42,12 +38,10 @@ async def test_update_post(client):
     assert updated_post["title"] == "Updated Title"
 
 
-@pytest.mark.asyncio
 async def test_delete_post(client):
     post_data = {"title": "Test Post", "content": "This is a test post."}
     create_response = client.post("/post/", json=post_data)
     created_post = create_response.json()
 
     delete_response = client.delete(f"/post/{created_post['id']}")
-    assert delete_response.status_code == 200
-    assert delete_response.json() == {"status": "OK"}
+    assert delete_response.status_code == 204
