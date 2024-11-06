@@ -11,9 +11,9 @@ from starlette import status
 from src.adapters.database import get_db
 from src.auth.schemas import CreateUserRequest, DecodedToken, Token
 
+from .config import get_auth_settings
 from .repository import UserRepository
 from .service import UserService
-from .config import get_auth_settings
 
 settings = get_auth_settings()
 
@@ -41,22 +41,16 @@ def get_user_service(repo: repository):
 user_service = Annotated[UserService, Depends(get_user_service)]
 
 
-def create_access_token(
-    username: str, user_id: int, email: str, expires_delta: timedelta
-):
+def create_access_token(username: str, user_id: int, email: str, expires_delta: timedelta):
     encode = {"sub": username, "id": user_id, "email": email}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
     return jwt.encode(encode, settings.secret_key, algorithm=settings.algorithm)
 
 
-async def get_current_user(
-    token: Annotated[str, Depends(oauth2_bearer)]
-) -> DecodedToken:
+async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]) -> DecodedToken:
     try:
-        payload = jwt.decode(
-            token, settings.secret_key, algorithms=[settings.algorithm]
-        )
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub", None)
         user_id: int = payload.get("id", None)
         user_email: str = payload.get("email", None)
@@ -67,9 +61,7 @@ async def get_current_user(
             )
         return DecodedToken(id=user_id, username=username, email=user_email)
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user."
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
@@ -82,16 +74,10 @@ async def create_user(repo: repository, create_user_request: CreateUserRequest):
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], service: user_service
-):
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], service: user_service):
     user = await service.authenticate_user(form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user."
-        )
-    token = create_access_token(
-        user.username, user.id, user.email, timedelta(minutes=20)
-    )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user.")
+    token = create_access_token(user.username, user.id, user.email, timedelta(minutes=20))
 
     return {"access_token": token, "token_type": "bearer"}

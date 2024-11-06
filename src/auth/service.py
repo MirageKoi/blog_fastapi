@@ -1,7 +1,7 @@
-from .schemas import CreateUserRequest
-from .repository import UserRepository
-from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+
+from .repository import UserRepository
+from .schemas import CreateUserRequest
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
