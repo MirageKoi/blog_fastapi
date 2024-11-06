@@ -22,7 +22,7 @@ class PostResponseDB(BaseModel):
     user_id: int
     created_at: dt.datetime
 
-    comments: list[CommentResponseDB | None]
+    comments: list[CommentResponseDB] | None = None
 
 
 class PostCreateDB(BaseModel):
@@ -38,6 +38,7 @@ class CommentCreate(BaseModel):
 class CommentCreateDB(CommentCreate):
     post_id: int
     user_id: int
+    is_blocked: bool = False
 
 
 class CommentResponseDB(BaseModel):
