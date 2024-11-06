@@ -3,10 +3,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AuthSettings(BaseSettings):
-    secret_key: str = Field(default="debug")
+    secret_key: str = Field(default="development")
     algorithm: str = Field(default="HS256")
 
-    model_config = SettingsConfigDict(env_file=".envtest")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 def get_auth_settings():
